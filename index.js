@@ -1,44 +1,77 @@
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
+
+let persons = [
+    { 
+      "id": 1,
+      "name": "Arto Hellas", 
+      "number": "040-123456"
+    },
+    { 
+      "id": 2,
+      "name": "Ada Lovelace", 
+      "number": "39-44-5323523"
+    },
+    { 
+      "id": 3,
+      "name": "Dan Abramov", 
+      "number": "12-43-234345"
+    },
+    { 
+      "id": 4,
+      "name": "Mary Poppendieck", 
+      "number": "39-23-6423122"
+    }
+]
 
 app.use(express.json())
 
-let notes = [
-    {
-        id: 1,
-        content: "HTML is easy",
-        date: "2019-05-30T17:30:31.098Z",
-        important: true
-    },
-    {
-        id: 2,
-        content: "Browser can execute only Javascript",
-        date: "2019-05-30T18:39:34.091Z",
-        important: false
-    },
-    {
-        id: 3,
-        content: "GET and POST are the most important methods of HTTP protocol",
-        date: "2019-05-30T19:20:14.298Z",
-        important: true
-    }
-]
+morgan.token("body", function (req, res) {
+    return JSON.stringify(req.body);
+});
+app.use(
+    morgan(function (tokens, req, res) {
+      const myLog = [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        tokens.res(req, res, "content-length"),
+        "-",
+        tokens["response-time"](req, res),
+        "ms",
+      ];
+  
+      if (req.method === "POST") {
+        myLog.push(tokens.body(req, res));
+      }
+      return myLog.join(" ");
+    })
+);
 
 // ********** get ********** //
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
-app.get('/api/notes', (request, response) => {
-  response.json(notes)
+app.get('/api/persons', (request, response) => {
+  response.json(persons)
 })
-app.get('/api/notes/:id', (request, response) => {
+app.get('/info', (request, response)=>{
+    const maxId = persons.length > 0
+      ? Math.max(...persons.map(n => n.id))
+      : 0
+    
+    const date = new Date();
+    
+    response.send(`<h1>phonebook has info for ${maxId} people.</h1><br><h1> ${date}.</h1>`);
+})
+app.get('/api/persons/:id', (request, response) => {
+
     const id = Number(request.params.id);
-    const note = notes.find(note => {
-      return note.id === id
-    })
-    console.log(note)
-    if (note) {
-        response.json(note)
+    const person = persons.find(person => person.id === id)
+   
+    if (person) {
+        response.json(person)
       } else {
         response.statusMessage = "Current password does not match";
         response.status(404).end()
@@ -46,40 +79,39 @@ app.get('/api/notes/:id', (request, response) => {
 })
 // ********** get ********** //
 
+
 // ********** delete ********** //
-app.delete('/api/notes/:id', (request, response) => {
+app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
-    notes = notes.filter(note => note.id !== id)
+    persons = persons.filter(person => person.id !== id)
   
     response.status(204).end()
 })
 // ********** delete ********** //
 
+
 // ********** post ********** //
-const generateId = () => {
-    const maxId = notes.length > 0
-      ? Math.max(...notes.map(n => n.id))
-      : 0
-    return maxId + 1
-}
-app.post('/api/notes', (request, response) => {
-    const body = request.body
-  
-    if (!body.content) {
+app.post('/api/persons', (request, response) => {
+    const body = request.body;
+    const name = body.name;
+
+    if (!body.number || !name) {
       return response.status(400).json({ 
-        error: 'content missing' 
-      })
+        error: 'number or name missing' 
+        })
+    }else if (persons.some((person) => person.name === name)){
+      return response.status(400).json({ 
+        error: 'name must be unique'
+        })
     }
-  
-    const note = {
-      content: body.content,
-      important: body.important || false,
-      date: new Date(),
-      id: generateId(),
+    
+    const person = {
+        id: Math.floor(Math.random() * 1000),
+        name: body.name,
+        number: body.number
     }
-  
-    notes = notes.concat(note)
-    response.json(note)
+    persons = persons.concat(person)
+    response.json(person)
 })
 // ********** post ********** //
 
