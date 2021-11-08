@@ -29,6 +29,7 @@ let persons = [
 app.use(cors())          // Cross-origin resource sharing (CORS)
 app.use(express.json())  // parses requests as json
 
+const {errorHandler} = require('./middleware/errorHandler')
 
 // ********** morgan ********** //
 morgan.token("body", function (req, res) {
@@ -62,9 +63,6 @@ app.use("/", express.static(`./front`));
 // ********** get-static ********** //
 
 // ********** get ********** //
-app.get('/', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
-})
 app.get('/api/persons', (request, response) => {
   response.json(persons)
 })
@@ -108,9 +106,10 @@ app.post('/api/persons', (request, response) => {
     const name = body.name;
 
     if (!body.number || !name) {
-      return response.status(400).json({ 
-        error: 'number or name missing' 
-        })
+      throw {'status': 400, 'message': "number or name missing"}
+      // return response.status(400).json({ 
+      //   error: 'number or name missing' 
+      //   })
     }else if (persons.some((person) => person.name === name)){
       return response.status(400).json({ 
         error: 'name must be unique'
@@ -126,6 +125,9 @@ app.post('/api/persons', (request, response) => {
     response.json(person)
 })
 // ********** post ********** //
+
+// middleware errorHandler
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
