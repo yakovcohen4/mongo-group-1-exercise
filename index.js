@@ -55,10 +55,10 @@ app.use(
 // ********** morgan ********** //
 
 // ********** get-static ********** //
-app.use("/", express.static(`../front`));
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "../front/index.html");
-});
+app.use("/", express.static(`./front`));
+// app.get("/", (req, res) => {
+//   res.sendFile(__dirname + "./front/index.html");
+// });
 // ********** get-static ********** //
 
 // ********** get ********** //
