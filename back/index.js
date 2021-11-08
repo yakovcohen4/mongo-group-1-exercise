@@ -29,27 +29,37 @@ let persons = [
 app.use(cors())
 app.use(express.json())
 
+
+// ********** morgan ********** //
 morgan.token("body", function (req, res) {
-    return JSON.stringify(req.body);
+  return JSON.stringify(req.body);
 });
 app.use(
-    morgan(function (tokens, req, res) {
-      const myLog = [
-        tokens.method(req, res),
-        tokens.url(req, res),
-        tokens.status(req, res),
-        tokens.res(req, res, "content-length"),
-        "-",
-        tokens["response-time"](req, res),
-        "ms",
-      ];
+  morgan(function (tokens, req, res) {
+    const myLog = [
+      tokens.method(req, res),
+      tokens.url(req, res),
+      tokens.status(req, res),
+      tokens.res(req, res, "content-length"),
+      "-",
+      tokens["response-time"](req, res),
+      "ms",
+    ];
   
-      if (req.method === "POST") {
-        myLog.push(tokens.body(req, res));
-      }
-      return myLog.join(" ");
-    })
+    if (req.method === "POST") {
+      myLog.push(tokens.body(req, res));
+    }
+    return myLog.join(" ");
+  })
 );
+// ********** morgan ********** //
+
+// ********** get-static ********** //
+app.use("/", express.static(`../front`));
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "../front/index.html");
+});
+// ********** get-static ********** //
 
 // ********** get ********** //
 app.get('/', (request, response) => {
