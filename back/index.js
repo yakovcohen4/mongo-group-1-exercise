@@ -26,8 +26,8 @@ let persons = [
     }
 ]
 
-app.use(cors())
-app.use(express.json())
+app.use(cors())          // Cross-origin resource sharing (CORS)
+app.use(express.json())  // parses requests as json
 
 
 // ********** morgan ********** //
