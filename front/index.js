@@ -14,7 +14,7 @@ searchBtn.addEventListener('click', searchById);
 showdataBtn.addEventListener('click', showInfo);
 deleteBtn.addEventListener('click', deletePreson);
 
-const baseUrl = 'https://yakov-phonebook.herokuapp.com/';
+const baseUrl = '';
 
 // method post **** /api/persons
 async function addPerson() {
@@ -178,7 +178,7 @@ async function deletePreson() {
 // }
 
 function valitation(input) {
-  if (input.value) {
+  if (input) {
     return true;
   } else {
     return false;
