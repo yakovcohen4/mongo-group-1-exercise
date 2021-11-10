@@ -113,7 +113,6 @@ router.post('/', async (request, response) => {
     console.log('in the else');
     //_id: Math.floor(Math.random() * 1000),
     const person = new Person({ _id: Math.floor(Math.random() * 1000), name, number });
-    console.log(person);
     person
       .save()
       .then(() => {
