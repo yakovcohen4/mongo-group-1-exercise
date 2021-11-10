@@ -14,7 +14,7 @@ searchBtn.addEventListener('click', searchById);
 showdataBtn.addEventListener('click', showInfo);
 deleteBtn.addEventListener('click', deletePreson);
 
-const baseUrl = 'http://localhost:3001';
+const baseUrl = 'https://yakov-phonebook.herokuapp.com/';
 
 // method post **** /api/persons
 async function addPerson() {
