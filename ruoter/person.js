@@ -104,20 +104,12 @@ router.post('/', async (request, response) => {
     response.status(400).send('number or name missing');
   } else if ((await Person.findOne({ name: name })) && !(await Person.findOne({ number: number }))) {
     await Person.findOneAndUpdate({ name: name }, { number: number });
-    console.log('ya');
-  }
-  //   else if (await Person.findOne({ name: name })) {
-  //     res.status(400).send('The contact already exists');
-  //   }
-  //   else if (persons.some(person => person.name === name)) {
-  //     response.status(400).json({
-  //       error: 'name must be unique',
-  //     });
-  //   }
-  //   else if (Person.find({ name: name }) || Person.find({ number: number })) {
-  //     response.status(400).send('name or number in phone book');
-  //   }
-  else {
+    response.status(200).send('The contact update successfully');
+  } else if (await Person.findOne({ name: name })) {
+    response.status(400).send('The contact already exists');
+  } else if (await Person.findOne({ number: number })) {
+    response.status(400).send('Number already used');
+  } else {
     console.log('in the else');
     //_id: Math.floor(Math.random() * 1000),
     const person = new Person({ _id: Math.floor(Math.random() * 1000), name, number });
