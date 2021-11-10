@@ -52,9 +52,10 @@ async function searchById() {
   console.log('you in search by id');
   const id = searchEl.value;
   const add = document.createElement('div');
-
+  console.log(id);
   try {
     if (valitation(id)) {
+      console.log('in the try');
       const response = await axios.get(`${baseUrl}/api/persons/${id}`);
 
       const data = response.data;
