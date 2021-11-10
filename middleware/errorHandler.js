@@ -4,17 +4,14 @@
 // 500 for server errors
 // 401 for unauthenticated user request (pokemon requests missing the username header)
 
-function errorHandler (err, req, res, next) {
+function errorHandler(err, req, res, next) {
+  console.log(err.status + ' ' + err.messege);
+  if (!err.status) {
+    res.status(500);
+    return res.send({ error: 'internal server error' });
+  }
 
-    console.log(err.status + " "+ err.messege);
-    if(!err.status) {
-        res.status(500);
-        return res.send({"error": "internal server error"})
-    }
-    res.status(err.status);
-    return res.send({"error": err.messege}) 
-};
+  res.status(err.status).send({ error: err.messege });
+}
 
-
-
-module.exports = {errorHandler}
+module.exports = { errorHandler };
